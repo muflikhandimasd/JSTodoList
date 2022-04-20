@@ -31,7 +31,7 @@
                 <th><input type="text" name="search" id="search"></th>
             </tr>
         </thead>
-        <tbody>
+        <tbody id="todolistBody">
             <tr>
                 <td><input type="button" value="Done"></td>
                 <td>Todo Description</td>
@@ -40,8 +40,59 @@
     </table>
 
     <script>
-        const todoList = [];
+        const todoList = [
+            'Belajar JS Dasar',
+            'Belajar JS OOP',
+            'Belajar JS DOM'
+        ];
 
+        function clearTodoList() {
+            const todolistBody = document.getElementById('todolistBody');
+            while (todolistBody.firstChild) {
+                todolistBody.removeChild(todolistBody.firstChild);
+            }
+        }
+        function removeTodoList(index) {
+            console.info(`Remove ke ${index}`);
+            todoList.splice(index, 1);
+            displayTodoList();
+        }
+
+        function addTodoList(index, todo) {
+            const tr = document.createElement('tr');
+            const tdButton = document.createElement('td');
+            tr.appendChild(tdButton);
+
+            const buttonDone = document.createElement('input');
+            buttonDone.type = 'button';
+            buttonDone.value = 'Done';
+            buttonDone.onclick = function(){
+                removeTodoList(index);
+            }
+            tdButton.appendChild(buttonDone);
+
+            const tdTodo = document.createElement('td');
+            tdTodo.textContent = todo;
+            tr.appendChild(tdTodo);
+
+            const todolistBody = document.getElementById('todolistBody');
+            todolistBody.appendChild(tr);
+        }
+
+        function displayTodoList() {
+            clearTodoList();
+            for (let index = 0; index < todoList.length; index++) {
+                const todo = todoList[index];
+
+                const searchText = document.getElementById('search').value.toLowerCase();
+                if (todo.toLowerCase().includes(searchText)) {
+                    addTodoList(index,todo);
+                }
+
+            }
+        }
+
+        // Add
         document.forms['todoForm'].onsubmit = function (event) {
             event.preventDefault();
 
@@ -49,6 +100,20 @@
             todoList.push(todo);
             document.forms['todoForm'].reset();
             console.info(todoList);
+            displayTodoList();
+        }
+
+        displayTodoList();
+
+        const searchInput = document.getElementById('search');
+
+        searchInput.onkeyup = function () {
+            displayTodoList();
+            console.info('On Key UP');
+        }
+        searchInput.onkeydown = function () {
+            displayTodoList();
+            console.info('ON KEY DOWN');
         }
     </script>
 </body>
